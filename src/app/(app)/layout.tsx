@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <TzCookie />
       <div className="md:flex">
         <Sidebar projects={projects} email={user.email} />
-        <main className="min-w-0 flex-1 px-4 py-6 md:px-8">{children}</main>
+        <main className="min-w-0 flex-1 px-4 pb-28 pt-6 md:px-8 md:pb-6">{children}</main>
       </div>
     </AppProvider>
   );

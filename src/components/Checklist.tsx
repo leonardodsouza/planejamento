@@ -45,10 +45,10 @@ export function Checklist({ taskId }: { taskId: string }) {
       )}
       <ul className="space-y-1">
         {items.map((it) => (
-          <li key={it.id} className="group flex items-center gap-2 text-sm">
+          <li key={it.id} className="group flex items-center gap-3 py-1.5 text-base md:gap-2 md:py-0 md:text-sm">
             <input
               type="checkbox"
-              className="h-4 w-4 accent-emerald-500"
+              className="h-5 w-5 shrink-0 accent-emerald-500 md:h-4 md:w-4"
               checked={!!it.done}
               onChange={(e) => {
                 const v = e.target.checked;
@@ -60,7 +60,7 @@ export function Checklist({ taskId }: { taskId: string }) {
             <button
               type="button"
               aria-label="Remover item"
-              className="text-slate-400 opacity-0 hover:text-red-600 group-hover:opacity-100 max-md:opacity-100"
+              className="-m-2 p-2 text-lg text-slate-400 opacity-0 hover:text-red-600 group-hover:opacity-100 max-md:opacity-100"
               onClick={() => {
                 setItems((cur) => cur!.filter((x) => x.id !== it.id));
                 deleteChecklistItem(it.id);
