@@ -12,8 +12,7 @@
     {
       "binding": "DB",
       "database_name": "planejamento",
-      // Troque pelo id que o comando `npx wrangler d1 create planejamento` mostrar.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "3ab8a45d-d226-4557-ab25-2f4ad4f36c06",
       "migrations_dir": "migrations"
     }
   ],

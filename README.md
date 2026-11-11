@@ -16,30 +16,18 @@ sessões de 30 dias guardadas no D1 (o cookie é `httpOnly` e o banco só guarda
 
 ## Colocar no ar
 
-Precisa de uma conta Cloudflare (o plano gratuito basta).
+O banco D1 `planejamento` já existe na conta Cloudflare (o id está em `wrangler.jsonc`).
 
-```bash
-npm install
-npx wrangler login
-npx wrangler d1 create planejamento
-```
+**Deploy automático a cada push:** no painel da Cloudflare, **Workers & Pages → Create →
+Import a repository**, escolha este repositório e use:
+- Build command: `npx opennextjs-cloudflare build`
+- Deploy command: `npm run deploy`
 
-1. Copie o `database_id` que o último comando mostrar para `wrangler.jsonc`.
-2. Crie as tabelas no banco de produção:
-   ```bash
-   npx wrangler d1 migrations apply planejamento --remote
-   ```
-3. Publique:
-   ```bash
-   npm run deploy
-   ```
-   O endereço fica algo como `https://planejamento.<sua-conta>.workers.dev`
-   (dá para ligar um domínio próprio em *Settings → Domains & Routes*).
+O `npm run deploy` aplica as migrações novas do banco (`migrations/`) e publica o app.
+O endereço fica algo como `https://planejamento.<sua-conta>.workers.dev`
+(dá para ligar um domínio próprio em *Settings → Domains & Routes*).
 
-### Deploy automático a cada push (opcional)
-Com o `database_id` já no `wrangler.jsonc`, no painel da Cloudflare vá em
-**Workers & Pages → Create → Import a repository**, escolha este repositório e use
-Build command `npx opennextjs-cloudflare build` e Deploy command `npx opennextjs-cloudflare deploy`.
+**Pelo terminal (alternativa):** `npx wrangler login` e depois `npm run deploy`.
 
 ## Rodar localmente
 
