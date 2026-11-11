@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Planejamento
 
-## Getting Started
+Sistema web para planejar tarefas e projetos, com login e dados salvos na nuvem
+(funciona em qualquer dispositivo).
 
-First, run the development server:
+- **Projetos** com cor, barra de progresso e quadro **Kanban** (A fazer / Fazendo / Feito), com arrastar e soltar
+- **Tarefas** com prazo, prioridade (baixa/média/alta), status, descrição e projeto
+- Visões **Hoje** (inclui atrasadas), **Esta semana** (dia a dia) e **Sem data**
+- Login por e-mail e senha; cada pessoa só vê os próprios dados (Row Level Security)
+
+Stack: Next.js 15 (App Router, Server Actions) · Tailwind CSS 4 · Supabase (Auth + Postgres).
+
+## Colocar no ar (gratuito)
+
+### 1. Supabase (login + banco)
+1. Crie uma conta em https://supabase.com e um projeto novo.
+2. Abra **SQL Editor**, cole o conteúdo de `supabase/migrations/20261111000000_init.sql` e rode.
+3. Em **Project Settings → API**, copie a *Project URL* e a chave *anon public*.
+
+### 2. Vercel (hospedagem)
+1. Em https://vercel.com, **Add New → Project** e importe este repositório do GitHub.
+2. Em *Environment Variables*, adicione:
+   - `NEXT_PUBLIC_SUPABASE_URL` = Project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = chave anon
+3. Clique em **Deploy**.
+
+### 3. Ajuste final no Supabase
+Em **Authentication → URL Configuration**, coloque o endereço da Vercel
+(ex.: `https://planejamento.vercel.app`) em *Site URL* e adicione
+`https://planejamento.vercel.app/auth/confirm` em *Redirect URLs*.
+Assim o link de confirmação de e-mail volta para o app.
+
+## Rodar localmente
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # preencha com os dados do Supabase
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ou, com Docker, use um Supabase local: `npx supabase start` (aplica a migração
+automaticamente) e use a URL/chave anon que ele imprime.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Próximos passos
+Calendário, subtarefas, tags e lembretes.
