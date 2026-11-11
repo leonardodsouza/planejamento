@@ -16,10 +16,10 @@ export function TemplateCard({ template, steps }: { template: Template; steps: T
     <li className="card p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="h-3 w-3 rounded-full" style={{ background: template.color }} />
-        <h2 className="flex-1 font-semibold">{template.name}</h2>
-        <Link href={`/modelos/${template.id}`} className="btn-ghost text-xs">Editar etapas</Link>
+        <h2 className="flex-1 font-semibold">Modelo: {template.name}</h2>
+        <Link href={`/projetos/modelos/${template.id}`} className="btn-ghost text-xs">Editar etapas</Link>
         <button className="btn-primary text-xs" onClick={() => setUsing(!using)}>
-          Usar modelo
+          Novo projeto
         </button>
       </div>
       <ol className="mt-3 space-y-1 text-sm text-slate-600 dark:text-slate-300">

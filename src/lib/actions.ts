@@ -19,19 +19,6 @@ function validColor(c: string) {
 
 // ---------- Projetos ----------
 
-export async function createProject(formData: FormData) {
-  const user = await requireUser();
-  const name = String(formData.get("name") ?? "").trim().slice(0, 100);
-  if (!name) return;
-  const id = newId();
-  await getDB()
-    .prepare("INSERT INTO projects (id, user_id, name, color) VALUES (?, ?, ?, ?)")
-    .bind(id, user.id, name, validColor(String(formData.get("color") ?? "")))
-    .run();
-  refresh();
-  redirect(`/projetos/${id}`);
-}
-
 export async function updateProject(id: string, fields: { name: string; color: string }) {
   const user = await requireUser();
   const name = fields.name.trim().slice(0, 100);

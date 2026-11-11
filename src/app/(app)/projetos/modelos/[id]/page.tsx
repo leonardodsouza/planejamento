@@ -12,7 +12,7 @@ export default async function ModeloPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <Link href="/modelos" className="text-sm text-slate-500 hover:underline">← Modelos</Link>
+      <Link href="/projetos" className="text-sm text-slate-500 hover:underline">← Projetos</Link>
       <TemplateHeader template={template} />
       <p className="text-sm text-slate-500">
         Cada etapa vira uma tarefa. O prazo é contado em dias antes da data de entrega, e o

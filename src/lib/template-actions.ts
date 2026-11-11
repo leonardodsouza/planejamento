@@ -80,7 +80,7 @@ export async function createTemplate(formData: FormData) {
     .bind(id, user.id, name, color(formData.get("color")))
     .run();
   refresh();
-  redirect(`/modelos/${id}`);
+  redirect(`/projetos/modelos/${id}`);
 }
 
 export async function updateTemplate(id: string, fields: { name: string; color: string }) {
@@ -102,7 +102,7 @@ export async function deleteTemplate(id: string) {
     db.prepare("DELETE FROM templates WHERE id = ? AND user_id = ?").bind(id, user.id),
   ]);
   refresh();
-  redirect("/modelos");
+  redirect("/projetos");
 }
 
 export type StepInput = {

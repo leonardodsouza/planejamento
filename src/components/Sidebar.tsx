@@ -51,11 +51,11 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           <NavLink href="/hoje" onClick={close}>☀️ Hoje</NavLink>
           <NavLink href="/semana" onClick={close}>📅 Esta semana</NavLink>
           <NavLink href="/entrada" onClick={close}>📥 Sem data</NavLink>
-          <NavLink href="/modelos" onClick={close}>🧩 Modelos</NavLink>
+          <NavLink href="/projetos" onClick={close}>📁 Projetos</NavLink>
         </nav>
 
         <div className="mt-6 flex items-center justify-between px-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Projetos
+          Em andamento
           <button className="text-lg leading-none hover:text-indigo-600" onClick={() => setAdding(!adding)} aria-label="Novo projeto">
             +
           </button>
@@ -75,7 +75,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
             </NavLink>
           ))}
           {projects.length === 0 && !adding && (
-            <p className="px-3 text-sm text-slate-400">Nenhum projeto ainda.</p>
+            <p className="px-3 text-sm text-slate-400">Nenhum projeto ainda. Clique no + para criar.</p>
           )}
         </nav>
 
