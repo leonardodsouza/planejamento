@@ -19,13 +19,14 @@ sessões de 30 dias guardadas no D1 (o cookie é `httpOnly` e o banco só guarda
 O banco D1 `planejamento` já existe na conta Cloudflare (o id está em `wrangler.jsonc`).
 
 **Deploy automático a cada push:** no painel da Cloudflare, **Workers & Pages → Create →
-Import a repository**, escolha este repositório e use:
-- Build command: deixe em branco
-- Deploy command: `npm run deploy`
-
-O `npm run deploy` compila, aplica as migrações novas do banco (`migrations/`) e publica o app.
+Import a repository** e escolha este repositório. Os comandos padrão já funcionam
+(`npm run build` gera o bundle do OpenNext e `npx wrangler deploy` publica).
 O endereço fica algo como `https://planejamento.<sua-conta>.workers.dev`
 (dá para ligar um domínio próprio em *Settings → Domains & Routes*).
+
+Mudanças no banco: crie um arquivo novo em `migrations/` e aplique com
+`npx wrangler d1 migrations apply planejamento --remote` (ou use `npm run deploy`,
+que compila, aplica as migrações e publica).
 
 **Pelo terminal (alternativa):** `npx wrangler login` e depois `npm run deploy`.
 
