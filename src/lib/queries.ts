@@ -1,58 +1,49 @@
-import { createClient } from "@/lib/supabase/server";
+import "server-only";
+import { requireUser } from "@/lib/server/auth";
+import { getDB } from "@/lib/server/db";
 import type { Project, Task } from "@/lib/types";
 
-export async function getProjects(): Promise<Project[]> {
-  const supabase = await createClient();
-  const { data } = await supabase.from("projects").select("*").order("created_at");
-  return data ?? [];
+// Toda consulta filtra por user_id: cada pessoa só enxerga os próprios dados.
+
+async function all<T>(sql: string, ...params: unknown[]): Promise<T[]> {
+  const user = await requireUser();
+  const { results } = await getDB()
+    .prepare(sql)
+    .bind(user.id, ...params)
+    .all<T>();
+  return results;
 }
 
-const ORDER = { ascending: true, nullsFirst: false } as const;
+export function getProjects() {
+  return all<Project>("SELECT * FROM projects WHERE user_id = ? ORDER BY created_at");
+}
 
 /** Tarefas não concluídas com prazo até `until` (inclui atrasadas). */
-export async function getOpenTasksUntil(until: string): Promise<Task[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("tasks")
-    .select("*")
-    .neq("status", "done")
-    .lte("due_date", until)
-    .order("due_date", ORDER)
-    .order("priority", { ascending: false });
-  return data ?? [];
+export function getOpenTasksUntil(until: string) {
+  return all<Task>(
+    `SELECT * FROM tasks WHERE user_id = ? AND status != 'done' AND due_date IS NOT NULL AND due_date <= ?
+     ORDER BY due_date, priority DESC, created_at`,
+    until,
+  );
 }
 
 /** Tarefas concluídas com prazo entre `from` e `to` (para mostrar riscadas). */
-export async function getDoneBetween(from: string, to: string): Promise<Task[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("status", "done")
-    .gte("due_date", from)
-    .lte("due_date", to)
-    .order("completed_at");
-  return data ?? [];
+export function getDoneBetween(from: string, to: string) {
+  return all<Task>(
+    `SELECT * FROM tasks WHERE user_id = ? AND status = 'done' AND due_date BETWEEN ? AND ?
+     ORDER BY completed_at`,
+    from,
+    to,
+  );
 }
 
-export async function getInboxTasks(): Promise<Task[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("tasks")
-    .select("*")
-    .neq("status", "done")
-    .is("due_date", null)
-    .order("priority", { ascending: false })
-    .order("created_at");
-  return data ?? [];
+export function getInboxTasks() {
+  return all<Task>(
+    `SELECT * FROM tasks WHERE user_id = ? AND status != 'done' AND due_date IS NULL
+     ORDER BY priority DESC, created_at`,
+  );
 }
 
-export async function getProjectTasks(projectId: string): Promise<Task[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("project_id", projectId)
-    .order("position");
-  return data ?? [];
+export function getProjectTasks(projectId: string) {
+  return all<Task>("SELECT * FROM tasks WHERE user_id = ? AND project_id = ? ORDER BY position", projectId);
 }

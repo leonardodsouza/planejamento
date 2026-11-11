@@ -30,14 +30,12 @@ export default function LoginPage() {
               type="password"
               name="password"
               required
-              minLength={6}
+              minLength={mode === "up" ? 8 : undefined}
               autoComplete={mode === "in" ? "current-password" : "new-password"}
             />
           </label>
 
           {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-          {state.message && <p className="text-sm text-emerald-600">{state.message}</p>}
-
           <button className="btn-primary w-full" disabled={pending}>
             {pending ? "Aguarde…" : mode === "in" ? "Entrar" : "Criar conta"}
           </button>

@@ -8,5 +8,14 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "planejamento",
+      // Troque pelo id que o comando `npx wrangler d1 create planejamento` mostrar.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
   "observability": { "enabled": true }
 }
