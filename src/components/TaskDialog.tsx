@@ -56,7 +56,7 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-white p-0 text-slate-900 backdrop:bg-black/40 md:m-auto md:h-auto md:max-h-[90dvh] md:w-[calc(100%-2rem)] md:max-w-lg md:rounded-xl md:shadow-xl dark:bg-slate-900 dark:text-slate-100"
+      className="m-0 h-dvh max-h-none w-full max-w-none overflow-x-hidden overflow-y-auto overscroll-contain bg-white p-0 text-slate-900 backdrop:bg-black/40 md:m-auto md:h-auto md:max-h-[90dvh] md:w-[calc(100%-2rem)] md:max-w-lg md:rounded-xl md:shadow-xl dark:bg-slate-900 dark:text-slate-100"
     >
       {open && (
         <form action={submit}>
@@ -67,7 +67,7 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
             <button className="btn-primary md:hidden" disabled={pending}>{pending ? "Salvando…" : "Salvar"}</button>
           </div>
 
-          <div className="space-y-4 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:space-y-3 md:p-5">
+          <div className="space-y-4 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:space-y-3 md:p-5 md:pb-5">
             <input className="input" name="title" placeholder="Título" defaultValue={v.title ?? ""} required autoFocus={!task} />
             <textarea
               className="input min-h-20 field-sizing-content max-h-[40vh]"
@@ -75,12 +75,12 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
               placeholder="Descrição (opcional)"
               defaultValue={v.description ?? ""}
             />
-            <div className="grid grid-cols-2 gap-3">
-              <label className="text-sm">
+            <div className="space-y-4 md:space-y-3">
+              <label className="block text-sm">
                 Prazo
                 <input className="input mt-1" type="date" name="due_date" defaultValue={v.due_date ?? ""} />
               </label>
-              <label className="text-sm">
+              <label className="block text-sm">
                 Prioridade
                 <select className="input mt-1" name="priority" defaultValue={v.priority ?? 2}>
                   {([3, 2, 1] as Priority[]).map((p) => (
@@ -88,7 +88,7 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
                   ))}
                 </select>
               </label>
-              <label className="text-sm">
+              <label className="block text-sm">
                 Status
                 <select className="input mt-1" name="status" defaultValue={v.status ?? "todo"}>
                   {(Object.keys(STATUS_LABEL) as Status[]).map((s) => (
@@ -96,7 +96,7 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
                   ))}
                 </select>
               </label>
-              <label className="text-sm">
+              <label className="block text-sm">
                 Projeto
                 <select className="input mt-1" name="project_id" defaultValue={v.project_id ?? ""}>
                   <option value="">Nenhum</option>

@@ -52,12 +52,12 @@ export function StepEditor({ templateId, step }: { templateId: string; step?: Te
         }
       >
         <input className="input" name="title" placeholder="Nome da etapa" defaultValue={step?.title} autoFocus required />
-        <div className="grid grid-cols-2 gap-3">
-          <label className="text-sm">
+        <div className="space-y-3">
+          <label className="block text-sm">
             Dias antes da entrega
             <input className="input mt-1" type="number" min={0} max={365} name="days_before" defaultValue={step?.days_before ?? 0} />
           </label>
-          <label className="text-sm">
+          <label className="block text-sm">
             Prioridade
             <select className="input mt-1" name="priority" defaultValue={step?.priority ?? 2}>
               {([3, 2, 1] as Priority[]).map((p) => <option key={p} value={p}>{PRIORITY_LABEL[p]}</option>)}

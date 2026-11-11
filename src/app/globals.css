@@ -27,7 +27,7 @@ body {
   @apply rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900;
 }
 @utility input {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-base outline-none md:py-2 md:text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-950;
+  @apply block w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-base outline-none md:py-2 md:text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-950;
 }
 @utility btn {
   @apply inline-flex items-center justify-center gap-1 rounded-lg px-3 py-2.5 text-base font-medium transition md:py-2 md:text-sm disabled:opacity-50;
