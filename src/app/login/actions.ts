@@ -32,7 +32,7 @@ export async function signIn(_: AuthState, formData: FormData): Promise<AuthStat
     return { error: "E-mail ou senha incorretos." };
   }
   await createSession(user.id);
-  redirect("/hoje");
+  redirect("/");
 }
 
 export async function signUp(_: AuthState, formData: FormData): Promise<AuthState> {
@@ -42,7 +42,7 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
   const id = await registerUser(email, password);
   if (!id) return { error: "Já existe uma conta com este e-mail." };
   await createSession(id);
-  redirect("/hoje");
+  redirect("/");
 }
 
 export async function signOut() {

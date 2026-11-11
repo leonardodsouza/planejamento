@@ -48,6 +48,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
         <div className="mb-6 hidden text-lg font-semibold md:block">Planejamento</div>
 
         <nav className="space-y-1">
+          <NavLink href="/" onClick={close}>🏠 Início</NavLink>
           <NavLink href="/hoje" onClick={close}>☀️ Hoje</NavLink>
           <NavLink href="/semana" onClick={close}>📅 Esta semana</NavLink>
           <NavLink href="/entrada" onClick={close}>📥 Sem data</NavLink>

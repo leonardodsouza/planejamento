@@ -38,7 +38,7 @@ export async function deleteProject(id: string) {
     db.prepare("DELETE FROM projects WHERE id = ? AND user_id = ?").bind(id, user.id),
   ]);
   refresh();
-  redirect("/hoje");
+  redirect("/");
 }
 
 // ---------- Tarefas ----------
