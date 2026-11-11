@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { createProject } from "@/lib/actions";
-import { PROJECT_COLORS, type Project } from "@/lib/types";
+import { NewProjectForm } from "./NewProjectForm";
+import type { Project } from "@/lib/types";
 import { signOut } from "@/app/login/actions";
 
 function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick: () => void }) {
@@ -51,6 +51,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           <NavLink href="/hoje" onClick={close}>☀️ Hoje</NavLink>
           <NavLink href="/semana" onClick={close}>📅 Esta semana</NavLink>
           <NavLink href="/entrada" onClick={close}>📥 Sem data</NavLink>
+          <NavLink href="/modelos" onClick={close}>🧩 Modelos</NavLink>
         </nav>
 
         <div className="mt-6 flex items-center justify-between px-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -61,25 +62,9 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
         </div>
 
         {adding && (
-          <form
-            action={async (fd) => {
-              setAdding(false);
-              close();
-              await createProject(fd);
-            }}
-            className="mt-2 space-y-2 px-1"
-          >
-            <input className="input" name="name" placeholder="Nome do projeto" autoFocus required />
-            <div className="flex flex-wrap gap-1.5">
-              {PROJECT_COLORS.map((c, i) => (
-                <label key={c} className="cursor-pointer">
-                  <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
-                  <span className="block h-5 w-5 rounded-full ring-offset-2 peer-checked:ring-2 peer-checked:ring-slate-400" style={{ background: c }} />
-                </label>
-              ))}
-            </div>
-            <button className="btn-primary w-full">Criar projeto</button>
-          </form>
+          <div className="mt-2 px-1">
+            <NewProjectForm onDone={() => { setAdding(false); close(); }} />
+          </div>
         )}
 
         <nav className="mt-2 flex-1 space-y-1 overflow-y-auto">

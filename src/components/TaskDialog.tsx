@@ -4,6 +4,7 @@ import { useEffect, useRef, useTransition } from "react";
 import { createTask, deleteTask, updateTask, type TaskInput } from "@/lib/actions";
 import { PRIORITY_LABEL, STATUS_LABEL, type Priority, type Status, type Task } from "@/lib/types";
 import { useApp } from "./AppContext";
+import { Checklist } from "./Checklist";
 
 type Props = {
   open: boolean;
@@ -55,14 +56,14 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl bg-white p-0 text-slate-900 shadow-xl backdrop:bg-black/40 dark:bg-slate-900 dark:text-slate-100"
+      className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-xl bg-white p-0 text-slate-900 shadow-xl backdrop:bg-black/40 dark:bg-slate-900 dark:text-slate-100"
     >
       {open && (
         <form action={submit} className="space-y-3 p-5">
           <h2 className="text-lg font-semibold">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
           <input className="input" name="title" placeholder="Título" defaultValue={v.title ?? ""} required autoFocus />
           <textarea
-            className="input min-h-20"
+            className="input min-h-20 field-sizing-content max-h-[40vh]"
             name="description"
             placeholder="Descrição (opcional)"
             defaultValue={v.description ?? ""}
@@ -98,6 +99,7 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
               </select>
             </label>
           </div>
+          {task && <Checklist taskId={task.id} />}
           <div className="flex items-center justify-between pt-2">
             {task ? (
               <button type="button" className="btn text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10" onClick={remove} disabled={pending}>

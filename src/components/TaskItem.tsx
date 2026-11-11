@@ -28,6 +28,11 @@ export function TaskMeta({ task, showProject = true }: { task: Task; showProject
           {formatDue(task.due_date, today)}
         </span>
       )}
+      {task.check_total > 0 && (
+        <span className={task.check_done === task.check_total ? "text-emerald-600" : ""}>
+          ☑ {task.check_done}/{task.check_total}
+        </span>
+      )}
       {showProject && project && (
         <span className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full" style={{ background: project.color }} />

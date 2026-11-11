@@ -19,6 +19,34 @@ export type Task = {
   position: number;
   created_at: string;
   completed_at: string | null;
+  check_total: number;
+  check_done: number;
+};
+
+export type ChecklistItem = {
+  id: string;
+  task_id: string;
+  text: string;
+  done: number;
+  position: number;
+};
+
+export type Template = {
+  id: string;
+  name: string;
+  color: string;
+  created_at: string;
+};
+
+export type TemplateStep = {
+  id: string;
+  template_id: string;
+  title: string;
+  description: string | null;
+  days_before: number;
+  priority: Priority;
+  checklist: string[];
+  position: number;
 };
 
 export const STATUS_LABEL: Record<Status, string> = {
