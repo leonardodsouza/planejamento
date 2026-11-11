@@ -20,10 +20,10 @@ O banco D1 `planejamento` já existe na conta Cloudflare (o id está em `wrangle
 
 **Deploy automático a cada push:** no painel da Cloudflare, **Workers & Pages → Create →
 Import a repository**, escolha este repositório e use:
-- Build command: `npx opennextjs-cloudflare build`
+- Build command: deixe em branco
 - Deploy command: `npm run deploy`
 
-O `npm run deploy` aplica as migrações novas do banco (`migrations/`) e publica o app.
+O `npm run deploy` compila, aplica as migrações novas do banco (`migrations/`) e publica o app.
 O endereço fica algo como `https://planejamento.<sua-conta>.workers.dev`
 (dá para ligar um domínio próprio em *Settings → Domains & Routes*).
 
