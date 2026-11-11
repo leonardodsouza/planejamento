@@ -119,7 +119,7 @@ function cleanStep(s: StepInput) {
   return {
     title: text(s.title, 200),
     description: text(s.description, 5000) || null,
-    days_before: Number.isFinite(days) ? Math.min(Math.max(days, 0), 365) : 0,
+    days_before: Number.isFinite(days) ? Math.min(Math.max(days, -365), 365) : 0, // negativo = depois da entrega
     priority: [1, 2, 3].includes(pr) ? pr : 2,
     checklist: JSON.stringify(
       String(s.checklist ?? "")

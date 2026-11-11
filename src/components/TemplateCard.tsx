@@ -7,7 +7,9 @@ import { NewProjectForm } from "./NewProjectForm";
 
 export function daysLabel(n: number) {
   if (n === 0) return "no dia da entrega";
-  return n === 1 ? "1 dia antes" : `${n} dias antes`;
+  const abs = Math.abs(n);
+  const quando = n > 0 ? "antes" : "depois";
+  return abs === 1 ? `1 dia ${quando}` : `${abs} dias ${quando}`;
 }
 
 export function TemplateCard({ template, steps }: { template: Template; steps: TemplateStep[] }) {

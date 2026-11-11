@@ -43,7 +43,7 @@ export function StepEditor({ templateId, step }: { templateId: string; step?: Te
             await saveStep(templateId, step?.id ?? null, {
               title: String(fd.get("title") ?? ""),
               description: String(fd.get("description") ?? ""),
-              days_before: Number(fd.get("days_before")),
+              days_before: Number(fd.get("days")) * (fd.get("when") === "after" ? -1 : 1),
               priority: Number(fd.get("priority")),
               checklist: String(fd.get("checklist") ?? ""),
             });
@@ -53,10 +53,24 @@ export function StepEditor({ templateId, step }: { templateId: string; step?: Te
       >
         <input className="input" name="title" placeholder="Nome da etapa" defaultValue={step?.title} autoFocus required />
         <div className="space-y-3">
-          <label className="block text-sm">
-            Dias antes da entrega
-            <input className="input mt-1" type="number" min={0} max={365} name="days_before" defaultValue={step?.days_before ?? 0} />
-          </label>
+          <div className="text-sm">
+            Prazo
+            <div className="mt-1 flex gap-2">
+              <input
+                className="input w-24 shrink-0"
+                type="number"
+                min={0}
+                max={365}
+                name="days"
+                aria-label="Dias"
+                defaultValue={Math.abs(step?.days_before ?? 0)}
+              />
+              <select className="input" name="when" aria-label="Antes ou depois" defaultValue={(step?.days_before ?? 0) < 0 ? "after" : "before"}>
+                <option value="before">dias antes da entrega</option>
+                <option value="after">dias depois da entrega</option>
+              </select>
+            </div>
+          </div>
           <label className="block text-sm">
             Prioridade
             <select className="input mt-1" name="priority" defaultValue={step?.priority ?? 2}>
