@@ -1,6 +1,7 @@
 "use client";
 
 import { useOptimistic, useState, useTransition } from "react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { moveTask } from "@/lib/actions";
 import { STATUS_LABEL, type Status, type Task } from "@/lib/types";
 import { TaskDialog } from "./TaskDialog";
@@ -79,8 +80,8 @@ export function Kanban({ tasks, projectId }: { tasks: Task[]; projectId: string 
               <h3 className="text-sm font-semibold">
                 {STATUS_LABEL[status]} <span className="font-normal text-slate-400">{col.length}</span>
               </h3>
-              <button className="-m-2 p-2 text-xl leading-none text-slate-400 hover:text-indigo-600" onClick={() => setCreating(status)} aria-label="Nova tarefa">
-                +
+              <button className="-m-2 p-2 text-slate-400 hover:text-indigo-600" onClick={() => setCreating(status)} aria-label="Nova tarefa">
+                <Plus size={18} strokeWidth={1.75} />
               </button>
             </header>
             <ul className="flex-1 space-y-2">
@@ -112,8 +113,8 @@ export function Kanban({ tasks, projectId }: { tasks: Task[]; projectId: string 
                     <TaskMeta task={t} showProject={false} />
                   </button>
                   <div className="-mx-1 mt-2 flex justify-between text-sm text-slate-500 md:hidden">
-                    <button disabled={status === "todo"} onClick={() => shift(t, -1)} className="rounded-md px-2 py-1 active:bg-slate-100 disabled:invisible">← voltar</button>
-                    <button disabled={status === "done"} onClick={() => shift(t, 1)} className="rounded-md px-2 py-1 active:bg-slate-100 disabled:invisible">avançar →</button>
+                    <button disabled={status === "todo"} onClick={() => shift(t, -1)} className="flex items-center gap-0.5 rounded-md px-2 py-1 active:bg-slate-100 disabled:invisible"><ChevronLeft size={16} strokeWidth={1.75} /> voltar</button>
+                    <button disabled={status === "done"} onClick={() => shift(t, 1)} className="flex items-center gap-0.5 rounded-md px-2 py-1 active:bg-slate-100 disabled:invisible">avançar <ChevronRight size={16} strokeWidth={1.75} /></button>
                   </div>
                 </li>
               ))}

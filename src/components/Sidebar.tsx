@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CalendarDays, Folder, House, Inbox, Menu, Plus, Settings, Sun, type LucideIcon } from "lucide-react";
 import { NewProjectForm } from "./NewProjectForm";
 import type { Project } from "@/lib/types";
 import { signOut } from "@/app/login/actions";
 
-function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
+function NavLink({ href, children, onClick, icon: Icon }: { href: string; children: React.ReactNode; onClick?: () => void; icon?: LucideIcon }) {
   const active = usePathname() === href;
   return (
     <Link
@@ -19,6 +20,7 @@ function NavLink({ href, children, onClick }: { href: string; children: React.Re
           : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       }`}
     >
+      {Icon && <Icon size={18} strokeWidth={1.75} className="shrink-0" />}
       {children}
     </Link>
   );
@@ -32,11 +34,11 @@ function ProjectsAndAccount({ projects, email, onNavigate }: { projects: Project
       <div className="mt-6 flex items-center justify-between px-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
         Em andamento
         <button
-          className="-m-2 p-2 text-xl leading-none hover:text-indigo-600"
+          className="-m-2 p-2 hover:text-indigo-600"
           onClick={() => setAdding(!adding)}
           aria-label="Novo projeto"
         >
-          +
+          <Plus size={16} strokeWidth={2} />
         </button>
       </div>
 
@@ -60,7 +62,7 @@ function ProjectsAndAccount({ projects, email, onNavigate }: { projects: Project
 
       <div className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-500 dark:border-slate-800">
         <div className="truncate px-3">{email}</div>
-        <Link href="/config" onClick={onNavigate} className="btn-ghost mt-1 w-full justify-start">⚙️ Configurações</Link>
+        <Link href="/config" onClick={onNavigate} className="btn-ghost mt-1 w-full justify-start"><Settings size={16} strokeWidth={1.75} /> Configurações</Link>
         <form action={signOut}>
           <button className="btn-ghost mt-1 w-full justify-start">Sair</button>
         </form>
@@ -70,10 +72,10 @@ function ProjectsAndAccount({ projects, email, onNavigate }: { projects: Project
 }
 
 const TABS = [
-  { href: "/", icon: "🏠", label: "Início" },
-  { href: "/hoje", icon: "☀️", label: "Hoje" },
-  { href: "/semana", icon: "📅", label: "Semana" },
-  { href: "/projetos", icon: "📁", label: "Projetos" },
+  { href: "/", icon: House, label: "Início" },
+  { href: "/hoje", icon: Sun, label: "Hoje" },
+  { href: "/semana", icon: CalendarDays, label: "Semana" },
+  { href: "/projetos", icon: Folder, label: "Projetos" },
 ];
 
 export function Sidebar({ projects, email }: { projects: Project[]; email: string }) {
@@ -89,11 +91,11 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-slate-200 bg-white p-4 md:flex dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-6 text-lg font-semibold">Planejamento</div>
         <nav className="space-y-1">
-          <NavLink href="/">🏠 Início</NavLink>
-          <NavLink href="/hoje">☀️ Hoje</NavLink>
-          <NavLink href="/semana">📅 Esta semana</NavLink>
-          <NavLink href="/entrada">📥 Sem data</NavLink>
-          <NavLink href="/projetos">📁 Projetos</NavLink>
+          <NavLink href="/" icon={House}>Início</NavLink>
+          <NavLink href="/hoje" icon={Sun}>Hoje</NavLink>
+          <NavLink href="/semana" icon={CalendarDays}>Esta semana</NavLink>
+          <NavLink href="/entrada" icon={Inbox}>Sem data</NavLink>
+          <NavLink href="/projetos" icon={Folder}>Projetos</NavLink>
         </nav>
         <ProjectsAndAccount projects={projects} email={email} />
       </aside>
@@ -111,7 +113,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
               href={t.href}
               className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${active ? "font-semibold text-indigo-600 dark:text-indigo-400" : "text-slate-500"}`}
             >
-              <span className={`text-xl leading-none ${active ? "" : "opacity-70 grayscale"}`}>{t.icon}</span>
+              <t.icon size={22} strokeWidth={active ? 2 : 1.75} />
               {t.label}
             </Link>
           );
@@ -120,7 +122,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           onClick={() => setMore(true)}
           className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${more ? "font-semibold text-indigo-600" : "text-slate-500"}`}
         >
-          <span className="text-xl leading-none">☰</span>
+          <Menu size={22} strokeWidth={1.75} />
           Mais
         </button>
       </nav>
@@ -132,7 +134,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           <div className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl dark:bg-slate-900">
             <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300" />
             <nav className="space-y-1">
-              <NavLink href="/entrada">📥 Sem data</NavLink>
+              <NavLink href="/entrada" icon={Inbox}>Sem data</NavLink>
             </nav>
             <ProjectsAndAccount projects={projects} email={email} onNavigate={() => setMore(false)} />
           </div>

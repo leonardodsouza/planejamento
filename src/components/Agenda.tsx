@@ -1,3 +1,4 @@
+import { CalendarDays } from "lucide-react";
 import Link from "next/link";
 import type { CalEvent } from "@/lib/server/calendar";
 
@@ -33,8 +34,8 @@ export function AgendaNotice({ connected, error }: { connected: boolean; error?:
   }
   if (!connected) {
     return (
-      <p className="text-xs text-slate-400">
-        📆 <Link href="/config" className="underline">Conecte o Google Agenda</Link> para ver seus compromissos aqui.
+      <p className="flex items-center gap-1.5 text-xs text-slate-400">
+        <CalendarDays size={14} strokeWidth={1.75} /> <Link href="/config" className="underline">Conecte o Google Agenda</Link> para ver seus compromissos aqui.
       </p>
     );
   }

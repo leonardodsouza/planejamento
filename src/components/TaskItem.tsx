@@ -4,6 +4,7 @@ import { useOptimistic, useState, useTransition } from "react";
 import { updateTask } from "@/lib/actions";
 import { formatDue } from "@/lib/dates";
 import { PRIORITY_LABEL, type Task } from "@/lib/types";
+import { Check, ListChecks } from "lucide-react";
 import { useApp } from "./AppContext";
 import { TaskDialog } from "./TaskDialog";
 
@@ -30,7 +31,7 @@ export function TaskMeta({ task, showProject = true }: { task: Task; showProject
       )}
       {task.check_total > 0 && (
         <span className={task.check_done === task.check_total ? "text-emerald-600" : ""}>
-          ☑ {task.check_done}/{task.check_total}
+          <ListChecks size={13} strokeWidth={1.75} className="mr-0.5 inline -mt-0.5" />{task.check_done}/{task.check_total}
         </span>
       )}
       {showProject && project && (
@@ -65,7 +66,7 @@ export function TaskItem({ task }: { task: Task }) {
           done ? "border-emerald-500 bg-emerald-500" : "border-slate-300 hover:border-emerald-500"
         }`}
       >
-        {done && "✓"}
+        {done && <Check size={12} strokeWidth={3} />}
       </button>
       <button className="min-w-0 flex-1 text-left" onClick={() => setEditing(true)}>
         <div className={`text-sm ${done ? "text-slate-400 line-through" : ""}`}>{task.title}</div>

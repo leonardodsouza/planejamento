@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { useActionState } from "react";
 import { saveCalendar, type CalendarState } from "@/lib/settings-actions";
 
@@ -8,7 +9,7 @@ export function CalendarForm({ connected }: { connected: boolean }) {
   return (
     <form action={action} className="space-y-2">
       {connected && !state.error && (
-        <p className="text-sm font-medium text-emerald-600">✓ Agenda conectada</p>
+        <p className="flex items-center gap-1 text-sm font-medium text-emerald-600"><Check size={16} strokeWidth={2} /> Agenda conectada</p>
       )}
       <input
         className="input"

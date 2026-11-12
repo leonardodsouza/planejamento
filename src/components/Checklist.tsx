@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { addChecklistItem, deleteChecklistItem, loadChecklist, toggleChecklistItem } from "@/lib/template-actions";
 import type { ChecklistItem } from "@/lib/types";
@@ -66,7 +67,7 @@ export function Checklist({ taskId }: { taskId: string }) {
                 deleteChecklistItem(it.id);
               }}
             >
-              ×
+              <X size={16} strokeWidth={1.75} />
             </button>
           </li>
         ))}

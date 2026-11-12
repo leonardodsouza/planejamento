@@ -42,7 +42,7 @@ export default async function HojePage() {
 
       <section>
         <h2 className="mb-2 text-sm font-semibold text-slate-500">Para hoje ({dueToday.length})</h2>
-        <TaskList tasks={dueToday} empty="Nenhuma tarefa para hoje. 🎉" />
+        <TaskList tasks={dueToday} empty="Nenhuma tarefa para hoje." />
       </section>
 
       {done.length > 0 && (
