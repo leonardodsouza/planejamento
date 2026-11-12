@@ -60,6 +60,7 @@ function ProjectsAndAccount({ projects, email, onNavigate }: { projects: Project
 
       <div className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-500 dark:border-slate-800">
         <div className="truncate px-3">{email}</div>
+        <Link href="/config" onClick={onNavigate} className="btn-ghost mt-1 w-full justify-start">⚙️ Configurações</Link>
         <form action={signOut}>
           <button className="btn-ghost mt-1 w-full justify-start">Sair</button>
         </form>

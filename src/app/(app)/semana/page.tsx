@@ -1,14 +1,21 @@
+import { AgendaNotice, EventList } from "@/components/Agenda";
 import { QuickAdd } from "@/components/QuickAdd";
 import { TaskList } from "@/components/TaskItem";
 import { addDays, startOfWeek, weekdayLabel } from "@/lib/dates";
 import { getDoneBetween, getOpenTasksUntil } from "@/lib/queries";
-import { serverToday } from "@/lib/today";
+import { requireUser } from "@/lib/server/auth";
+import { getAgenda } from "@/lib/server/calendar";
+import { serverToday, serverTz } from "@/lib/today";
 
 export default async function SemanaPage() {
-  const today = await serverToday();
+  const [user, today, tz] = await Promise.all([requireUser(), serverToday(), serverTz()]);
   const monday = startOfWeek(today);
   const sunday = addDays(monday, 6);
-  const [open, done] = await Promise.all([getOpenTasksUntil(sunday), getDoneBetween(monday, sunday)]);
+  const [open, done, agenda] = await Promise.all([
+    getOpenTasksUntil(sunday),
+    getDoneBetween(monday, sunday),
+    getAgenda(user.id, today, sunday, tz),
+  ]);
   const overdue = open.filter((t) => t.due_date! < today);
   const days = Array.from({ length: 7 }, (_, i) => addDays(monday, i)).filter((d) => d >= today);
 
@@ -16,6 +23,7 @@ export default async function SemanaPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-semibold">Esta semana</h1>
       <QuickAdd defaults={{ due_date: today }} />
+      <AgendaNotice connected={agenda.connected} error={agenda.error} />
 
       {overdue.length > 0 && (
         <section>
@@ -29,13 +37,15 @@ export default async function SemanaPage() {
           ...open.filter((t) => t.due_date === d),
           ...done.filter((t) => t.due_date === d),
         ];
+        const events = agenda.events.filter((e) => e.date === d);
         return (
-          <section key={d}>
-            <h2 className="mb-2 text-sm font-semibold text-slate-500 first-letter:uppercase">
+          <section key={d} className="space-y-2">
+            <h2 className="text-sm font-semibold text-slate-500 first-letter:uppercase">
               {d === today ? "Hoje · " : ""}
               {weekdayLabel(d)}
             </h2>
-            <TaskList tasks={tasks} empty="Livre." />
+            <EventList events={events} />
+            <TaskList tasks={tasks} empty={events.length ? "Nenhuma tarefa." : "Livre."} />
           </section>
         );
       })}
