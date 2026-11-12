@@ -49,7 +49,9 @@ export async function createFromTemplate(formData: FormData) {
   const steps = await getTemplateSteps(template.id);
   const projectId = newId();
   const stmts = [
-    db.prepare("INSERT INTO projects (id, user_id, name, color) VALUES (?, ?, ?, ?)").bind(projectId, user.id, name, template.color),
+    db
+      .prepare("INSERT INTO projects (id, user_id, name, color, due_date) VALUES (?, ?, ?, ?, ?)")
+      .bind(projectId, user.id, name, template.color, target),
   ];
   const prefs = await db.prepare("SELECT skip_non_workdays FROM users WHERE id = ?").bind(user.id).first<{ skip_non_workdays: number }>();
   const skip = !!prefs?.skip_non_workdays;

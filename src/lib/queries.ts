@@ -42,6 +42,15 @@ export function getDoneBetween(from: string, to: string) {
   );
 }
 
+/** Todas as tarefas com prazo entre `from` e `to` (calendário). */
+export function getTasksBetween(from: string, to: string) {
+  return all<Task>(
+    `${TASK} WHERE user_id = ? AND due_date BETWEEN ? AND ? ORDER BY due_date, status = 'done', priority DESC, created_at`,
+    from,
+    to,
+  );
+}
+
 export function getInboxTasks() {
   return all<Task>(
     `${TASK} WHERE user_id = ? AND status != 'done' AND due_date IS NULL

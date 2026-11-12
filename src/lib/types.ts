@@ -5,6 +5,7 @@ export type Project = {
   id: string;
   name: string;
   color: string;
+  due_date: string | null; // entrega final
   created_at: string;
 };
 

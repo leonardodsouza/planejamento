@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CalendarDays, Folder, House, Inbox, Menu, Plus, Settings, Sun, type LucideIcon } from "lucide-react";
+import { CalendarDays, CalendarRange, Folder, House, Inbox, Menu, Plus, Settings, Sun, type LucideIcon } from "lucide-react";
 import { NewProjectForm } from "./NewProjectForm";
 import type { Project } from "@/lib/types";
 import { signOut } from "@/app/login/actions";
@@ -94,6 +94,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           <NavLink href="/" icon={House}>Início</NavLink>
           <NavLink href="/hoje" icon={Sun}>Hoje</NavLink>
           <NavLink href="/semana" icon={CalendarDays}>Esta semana</NavLink>
+          <NavLink href="/calendario" icon={CalendarRange}>Calendário</NavLink>
           <NavLink href="/entrada" icon={Inbox}>Sem data</NavLink>
           <NavLink href="/projetos" icon={Folder}>Projetos</NavLink>
         </nav>
@@ -134,6 +135,7 @@ export function Sidebar({ projects, email }: { projects: Project[]; email: strin
           <div className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl dark:bg-slate-900">
             <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300" />
             <nav className="space-y-1">
+              <NavLink href="/calendario" icon={CalendarRange} onClick={() => setMore(false)}>Calendário</NavLink>
               <NavLink href="/entrada" icon={Inbox}>Sem data</NavLink>
             </nav>
             <ProjectsAndAccount projects={projects} email={email} onNavigate={() => setMore(false)} />
