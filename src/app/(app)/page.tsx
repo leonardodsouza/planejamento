@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
+import { ViewToggle, type HomeView } from "@/components/ViewToggle";
 import { formatDue } from "@/lib/dates";
 import { getProjectsOverview, getTodayCounts, type ProjectOverview } from "@/lib/queries";
 import { serverToday } from "@/lib/today";
@@ -69,7 +71,54 @@ function ProjectCard({ p, today }: { p: ProjectOverview; today: string }) {
   );
 }
 
+function ProjectBars({ projects, today }: { projects: ProjectOverview[]; today: string }) {
+  return (
+    <div className="card divide-y divide-slate-200 dark:divide-slate-800">
+      {projects.map((p) => {
+        const pct = p.total ? Math.round((p.done / p.total) * 100) : 0;
+        const finished = p.total > 0 && p.done === p.total;
+        const late = p.overdue > 0;
+        return (
+          <Link
+            key={p.id}
+            href={`/projetos/${p.id}`}
+            className="block px-4 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800/40"
+          >
+            <div className="flex items-baseline justify-between gap-3 text-sm">
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: p.color }} />
+                <span className="truncate font-medium">{p.name}</span>
+              </span>
+              <span className="flex shrink-0 items-baseline gap-2 text-xs text-slate-500">
+                {late && <span className="font-medium text-red-600">{p.overdue} atrasada{p.overdue > 1 ? "s" : ""}</span>}
+                {p.delivery && !finished && <span className="hidden sm:inline">{formatDue(p.delivery, today)}</span>}
+                <span className="w-9 text-right text-sm font-semibold text-slate-700 dark:text-slate-200">{pct}%</span>
+              </span>
+            </div>
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+              <div
+                className={`h-full rounded-full ${finished ? "bg-emerald-500" : late ? "bg-red-500" : "bg-indigo-500"}`}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProjectGroup({ projects, today, view }: { projects: ProjectOverview[]; today: string; view: HomeView }) {
+  if (view === "bars") return <ProjectBars projects={projects} today={today} />;
+  return (
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {projects.map((p) => <ProjectCard key={p.id} p={p} today={today} />)}
+    </div>
+  );
+}
+
 export default async function InicioPage() {
+  const view: HomeView = (await cookies()).get("home_view")?.value === "bars" ? "bars" : "cards";
   const today = await serverToday();
   const [projects, counts] = await Promise.all([getProjectsOverview(today), getTodayCounts(today)]);
   const active = projects.filter((p) => p.total === 0 || p.done < p.total);
@@ -77,7 +126,10 @@ export default async function InicioPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
-      <h1 className="text-2xl font-semibold">Início</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold">Início</h1>
+        <ViewToggle view={view} />
+      </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Projetos em andamento" value={active.length} href="/projetos" />
@@ -93,18 +145,14 @@ export default async function InicioPage() {
             Nenhum projeto em andamento. <Link href="/projetos" className="text-indigo-600 underline">Criar um projeto</Link>
           </p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {active.map((p) => <ProjectCard key={p.id} p={p} today={today} />)}
-          </div>
+          <ProjectGroup projects={active} today={today} view={view} />
         )}
       </section>
 
       {finished.length > 0 && (
         <section>
           <h2 className="mb-3 text-sm font-semibold text-slate-500">Concluídos</h2>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {finished.map((p) => <ProjectCard key={p.id} p={p} today={today} />)}
-          </div>
+          <ProjectGroup projects={finished} today={today} view={view} />
         </section>
       )}
     </div>
