@@ -22,7 +22,7 @@ export default async function ConfigPage() {
           <p className="mt-1 text-sm text-slate-500">
             Ao criar um projeto a partir de um modelo, etapas que cairiam em sábado, domingo ou feriado
             nacional vão para o dia útil anterior (ou o seguinte, se forem depois da entrega). O dia da
-            entrega não muda. Projetos já criados não são alterados.
+            entrega não muda.
           </p>
         </div>
         <WorkdaysToggle enabled={!!prefs?.skip_non_workdays} />
