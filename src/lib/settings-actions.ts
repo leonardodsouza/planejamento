@@ -30,7 +30,18 @@ export async function saveCalendar(_: CalendarState, formData: FormData): Promis
     await getDB().prepare("UPDATE users SET ical_url = ? WHERE id = ?").bind(url, user.id).run();
     revalidatePath("/", "layout");
     return { ok: `Agenda conectada! ${events.length} compromisso(s) hoje.` };
-  } catch {
-    return { error: "Não consegui ler essa agenda. Confira se copiou o endereço secreto completo." };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("calendar test failed", msg);
+    if (/HTTP 40[34]/.test(msg)) {
+      return {
+        error:
+          "O Google recusou esse endereço (" + msg + "). Use o \"Endereço secreto no formato iCal\", que termina em /basic.ics e tem \"private-\" no meio. O endereço público só funciona se a agenda for pública.",
+      };
+    }
+    if (/não é uma agenda/.test(msg)) {
+      return { error: "Esse link não é de uma agenda iCal. Copie o \"Endereço secreto no formato iCal\" (termina em .ics)." };
+    }
+    return { error: `Não consegui ler essa agenda (${msg}). Confira se copiou o endereço secreto completo.` };
   }
 }
