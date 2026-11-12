@@ -1,14 +1,32 @@
 import { CalendarForm } from "@/components/CalendarForm";
+import { WorkdaysToggle } from "@/components/WorkdaysToggle";
+import { getDB } from "@/lib/server/db";
 import { requireUser } from "@/lib/server/auth";
 import { getIcalUrl } from "@/lib/server/calendar";
 
 export default async function ConfigPage() {
   const user = await requireUser();
   const connected = !!(await getIcalUrl(user.id));
+  const prefs = await getDB()
+    .prepare("SELECT skip_non_workdays FROM users WHERE id = ?")
+    .bind(user.id)
+    .first<{ skip_non_workdays: number }>();
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-semibold">Configurações</h1>
+
+      <section className="card flex items-start justify-between gap-4 p-5">
+        <div>
+          <h2 className="font-semibold">Não agendar em fins de semana e feriados</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Ao criar um projeto a partir de um modelo, etapas que cairiam em sábado, domingo ou feriado
+            nacional vão para o dia útil anterior (ou o seguinte, se forem depois da entrega). O dia da
+            entrega não muda. Projetos já criados não são alterados.
+          </p>
+        </div>
+        <WorkdaysToggle enabled={!!prefs?.skip_non_workdays} />
+      </section>
 
       <section className="card space-y-4 p-5">
         <div>

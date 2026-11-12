@@ -45,3 +45,12 @@ export async function saveCalendar(_: CalendarState, formData: FormData): Promis
     return { error: `Não consegui ler essa agenda (${msg}). Confira se copiou o endereço secreto completo.` };
   }
 }
+
+export async function setSkipNonWorkdays(enabled: boolean) {
+  const user = await requireUser();
+  await getDB()
+    .prepare("UPDATE users SET skip_non_workdays = ? WHERE id = ?")
+    .bind(enabled ? 1 : 0, user.id)
+    .run();
+  revalidatePath("/config");
+}

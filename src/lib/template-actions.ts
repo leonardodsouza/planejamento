@@ -2,11 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addDays } from "@/lib/dates";
 import { getChecklist as queryChecklist, getTemplateSteps } from "@/lib/queries";
 import { requireUser } from "@/lib/server/auth";
 import { getDB, newId } from "@/lib/server/db";
 import { serverToday } from "@/lib/today";
+import { stepDueDate } from "@/lib/workdays";
 import { PROJECT_COLORS, type ChecklistItem } from "@/lib/types";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -51,10 +51,11 @@ export async function createFromTemplate(formData: FormData) {
   const stmts = [
     db.prepare("INSERT INTO projects (id, user_id, name, color) VALUES (?, ?, ?, ?)").bind(projectId, user.id, name, template.color),
   ];
+  const prefs = await db.prepare("SELECT skip_non_workdays FROM users WHERE id = ?").bind(user.id).first<{ skip_non_workdays: number }>();
+  const skip = !!prefs?.skip_non_workdays;
   const base = Date.now();
   steps.forEach((s, i) => {
-    let due = addDays(target, -s.days_before);
-    if (due < today) due = today; // nada de prazo no passado
+    const due = stepDueDate(target, s.days_before, today, skip);
     const taskId = newId();
     stmts.push(
       db
