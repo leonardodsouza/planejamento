@@ -36,8 +36,17 @@ export async function createFromTemplate(formData: FormData) {
   const dueRaw = String(formData.get("due_date") ?? "");
   const target = DATE_RE.test(dueRaw) ? dueRaw : today;
 
-  const steps = await getTemplateSteps(template.id);
   const db = getDB();
+  // Proteção extra contra envio duplicado: mesmo nome criado há menos de 15 segundos.
+  const recent = await db
+    .prepare(
+      "SELECT id FROM projects WHERE user_id = ? AND name = ? AND created_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-15 seconds')",
+    )
+    .bind(user.id, name)
+    .first<{ id: string }>();
+  if (recent) redirect(`/projetos/${recent.id}`);
+
+  const steps = await getTemplateSteps(template.id);
   const projectId = newId();
   const stmts = [
     db.prepare("INSERT INTO projects (id, user_id, name, color) VALUES (?, ?, ?, ?)").bind(projectId, user.id, name, template.color),

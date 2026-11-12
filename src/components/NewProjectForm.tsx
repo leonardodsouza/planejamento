@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { createFromTemplate } from "@/lib/template-actions";
 import { useApp } from "./AppContext";
 
@@ -10,6 +11,7 @@ export function NewProjectForm({ onDone, templateId }: { onDone?: () => void; te
   const { templates } = useApp();
   const [tpl, setTpl] = useState(templateId ?? templates[0]?.id ?? "");
   const template = templates.find((t) => t.id === tpl);
+  const sending = useRef(false);
 
   if (!template) {
     return (
@@ -23,8 +25,15 @@ export function NewProjectForm({ onDone, templateId }: { onDone?: () => void; te
   return (
     <form
       action={async (fd) => {
-        onDone?.();
-        await createFromTemplate(fd);
+        // Evita criar o projeto duas vezes com clique duplo ou Enter + clique.
+        if (sending.current) return;
+        sending.current = true;
+        try {
+          await createFromTemplate(fd);
+        } finally {
+          sending.current = false;
+          onDone?.();
+        }
       }}
       className="space-y-2"
     >
@@ -41,7 +50,16 @@ export function NewProjectForm({ onDone, templateId }: { onDone?: () => void; te
         Data de entrega / publicação
         <input className="input mt-1" type="date" name="due_date" required />
       </label>
-      <button className="btn-primary w-full">Criar {template.name.toLowerCase()}</button>
+      <SubmitButton label={`Criar ${template.name.toLowerCase()}`} />
     </form>
+  );
+}
+
+function SubmitButton({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button className="btn-primary w-full" disabled={pending}>
+      {pending ? "Criando…" : label}
+    </button>
   );
 }
