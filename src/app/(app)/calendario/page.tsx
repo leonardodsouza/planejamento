@@ -1,4 +1,3 @@
-import { AgendaNotice } from "@/components/Agenda";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { addDays, startOfWeek } from "@/lib/dates";
 import { getProjects, getTasksBetween } from "@/lib/queries";
@@ -39,7 +38,6 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
         deliveries={deliveries}
         events={agenda.events}
       />
-      <AgendaNotice connected={agenda.connected} error={agenda.error} />
     </div>
   );
 }
