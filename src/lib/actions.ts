@@ -3,15 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/server/auth";
-import { getDB, newId } from "@/lib/server/db";
-import { PROJECT_COLORS, type Priority, type Status } from "@/lib/types";
+import { getDB } from "@/lib/server/db";
+import { checkProject, cleanTask, insertTask, type TaskInput } from "@/lib/server/tasks";
+import { PROJECT_COLORS, type Status } from "@/lib/types";
+
+export type { TaskInput };
 
 function refresh() {
   revalidatePath("/", "layout");
 }
-
-const STATUSES: Status[] = ["todo", "doing", "done"];
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function validColor(c: string) {
   return PROJECT_COLORS.includes(c) ? c : PROJECT_COLORS[0];
@@ -43,54 +43,9 @@ export async function deleteProject(id: string) {
 
 // ---------- Tarefas ----------
 
-export type TaskInput = {
-  title: string;
-  description?: string | null;
-  due_date?: string | null;
-  priority?: Priority;
-  status?: Status;
-  project_id?: string | null;
-};
-
-/** Valida e normaliza os campos recebidos do navegador. */
-function clean(input: Partial<TaskInput>): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  if (input.title !== undefined) out.title = String(input.title).trim().slice(0, 200);
-  if (input.description !== undefined)
-    out.description = String(input.description ?? "").trim().slice(0, 5000) || null;
-  if (input.due_date !== undefined)
-    out.due_date = input.due_date && DATE_RE.test(input.due_date) ? input.due_date : null;
-  if (input.priority !== undefined) out.priority = [1, 2, 3].includes(Number(input.priority)) ? Number(input.priority) : 2;
-  if (input.project_id !== undefined) out.project_id = input.project_id || null;
-  if (input.status !== undefined) {
-    out.status = STATUSES.includes(input.status) ? input.status : "todo";
-    out.completed_at = out.status === "done" ? new Date().toISOString() : null;
-  }
-  return out;
-}
-
-/** Garante que o projeto informado pertence ao usuário. */
-async function checkProject(userId: string, projectId: unknown) {
-  if (!projectId) return;
-  const row = await getDB()
-    .prepare("SELECT 1 FROM projects WHERE id = ? AND user_id = ?")
-    .bind(projectId, userId)
-    .first();
-  if (!row) throw new Error("Projeto não encontrado");
-}
-
 export async function createTask(input: TaskInput) {
   const user = await requireUser();
-  const data = clean({ status: "todo", priority: 2, ...input });
-  if (!data.title) return;
-  await checkProject(user.id, data.project_id);
-  const fields = { id: newId(), user_id: user.id, position: Date.now(), ...data };
-  const cols = Object.keys(fields);
-  await getDB()
-    .prepare(`INSERT INTO tasks (${cols.join(", ")}) VALUES (${cols.map(() => "?").join(", ")})`)
-    .bind(...Object.values(fields))
-    .run();
-  refresh();
+  if (await insertTask(user.id, input)) refresh();
 }
 
 async function update(id: string, data: Record<string, unknown>) {
@@ -107,11 +62,11 @@ async function update(id: string, data: Record<string, unknown>) {
 }
 
 export async function updateTask(id: string, input: Partial<TaskInput>) {
-  await update(id, clean(input));
+  await update(id, cleanTask(input));
 }
 
 export async function moveTask(id: string, status: Status, position: number) {
-  await update(id, { ...clean({ status }), position: Number(position) || Date.now() });
+  await update(id, { ...cleanTask({ status }), position: Number(position) || Date.now() });
 }
 
 export async function deleteTask(id: string) {

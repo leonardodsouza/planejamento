@@ -6,6 +6,7 @@ import { getDB, newId } from "./db";
 
 export const SESSION_COOKIE = "session";
 const SESSION_DAYS = 30;
+const API_TOKEN_DAYS = 365;
 const PBKDF2_ITERATIONS = 100_000; // máximo suportado pelo Workers
 
 const enc = new TextEncoder();
@@ -41,6 +42,8 @@ async function sha256(text: string) {
   return toHex(await crypto.subtle.digest("SHA-256", enc.encode(text)));
 }
 
+export type User = { id: string; email: string };
+
 export async function createSession(userId: string) {
   const token = toHex(crypto.getRandomValues(new Uint8Array(32)));
   const expires = Date.now() + SESSION_DAYS * 86_400_000;
@@ -60,19 +63,22 @@ export async function createSession(userId: string) {
   });
 }
 
-export async function destroySession() {
-  const store = await cookies();
-  const token = store.get(SESSION_COOKIE)?.value;
-  if (token) await getDB().prepare("DELETE FROM sessions WHERE id = ?").bind(await sha256(token)).run();
-  store.delete(SESSION_COOKIE);
+/**
+ * Token para apps externos (extensão do Safari). Fica na mesma tabela de
+ * sessões (só o hash é salvo) e é enviado no cabeçalho Authorization: Bearer.
+ */
+export async function createApiToken(userId: string): Promise<string> {
+  const token = toHex(crypto.getRandomValues(new Uint8Array(32)));
+  const expires = Date.now() + API_TOKEN_DAYS * 86_400_000;
+  await getDB()
+    .prepare("INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)")
+    .bind(await sha256(token), userId, expires)
+    .run();
+  return token;
 }
 
-export type User = { id: string; email: string };
-
-/** Usuário da sessão atual, ou null. Memorizado por requisição. */
-export const getUser = cache(async (): Promise<User | null> => {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!token) return null;
+/** Usuário dono de um token (de cookie ou Bearer), ou null se inválido/expirado. */
+export async function userFromToken(token: string): Promise<User | null> {
   const row = await getDB()
     .prepare(
       "SELECT u.id, u.email, s.expires_at FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id = ?",
@@ -81,6 +87,23 @@ export const getUser = cache(async (): Promise<User | null> => {
     .first<{ id: string; email: string; expires_at: number }>();
   if (!row || row.expires_at < Date.now()) return null;
   return { id: row.id, email: row.email };
+}
+
+export async function revokeToken(token: string) {
+  await getDB().prepare("DELETE FROM sessions WHERE id = ?").bind(await sha256(token)).run();
+}
+
+export async function destroySession() {
+  const store = await cookies();
+  const token = store.get(SESSION_COOKIE)?.value;
+  if (token) await getDB().prepare("DELETE FROM sessions WHERE id = ?").bind(await sha256(token)).run();
+  store.delete(SESSION_COOKIE);
+}
+
+/** Usuário da sessão atual, ou null. Memorizado por requisição. */
+export const getUser = cache(async (): Promise<User | null> => {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return token ? userFromToken(token) : null;
 });
 
 export async function requireUser(): Promise<User> {

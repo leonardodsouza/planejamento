@@ -7,6 +7,8 @@ Sistema web para planejar tarefas e projetos, com login e dados salvos na nuvem
 - **Tarefas** com prazo, prioridade (baixa/média/alta), status, descrição e projeto
 - Visões **Hoje** (inclui atrasadas), **Esta semana** (dia a dia) e **Sem data**
 - Login por e-mail e senha; cada pessoa só vê os próprios dados
+- **Extensão do Safari** para adicionar tarefas da página aberta e ver as de hoje
+  (pasta [`extensao-safari`](extensao-safari/README.md))
 
 Stack: Next.js 15 (App Router, Server Actions) · Tailwind CSS 4 ·
 Cloudflare Workers (via [OpenNext](https://opennext.js.org/cloudflare)) · Cloudflare D1 (banco SQLite).

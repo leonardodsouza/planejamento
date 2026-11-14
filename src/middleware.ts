@@ -6,7 +6,8 @@ export function middleware(request: NextRequest) {
   const hasSession = request.cookies.has("session");
   const path = request.nextUrl.pathname;
 
-  if (!hasSession && !path.startsWith("/login")) {
+  // /api/ext usa token no cabeçalho Authorization (extensão do Safari), não cookie.
+  if (!hasSession && !path.startsWith("/login") && !path.startsWith("/api/ext")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
   return NextResponse.next();

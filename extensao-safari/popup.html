@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planejamento</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Entrar -->
+  <section id="login" hidden>
+    <header class="brand"><img src="icons/icon-48.png" alt=""> Planejamento</header>
+    <form id="login-form">
+      <label>Endereço do app
+        <input name="server" type="url" inputmode="url" autocomplete="url" placeholder="https://planejamento.suaconta.workers.dev" required>
+      </label>
+      <label>E-mail
+        <input name="email" type="email" autocomplete="username" required>
+      </label>
+      <label>Senha
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <p class="error" id="login-error" hidden></p>
+      <button class="primary" type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <!-- Principal -->
+  <section id="main" hidden>
+    <form id="task-form">
+      <label>Tarefa
+        <input name="title" maxlength="200" required autocomplete="off">
+      </label>
+      <label>Notas
+        <textarea name="description" rows="2" maxlength="5000"></textarea>
+      </label>
+
+      <div class="field">
+        <span class="label">Quando</span>
+        <div class="chips" id="when">
+          <button type="button" data-when="today" class="on">Hoje</button>
+          <button type="button" data-when="tomorrow">Amanhã</button>
+          <button type="button" data-when="none">Sem data</button>
+          <input type="date" name="date" aria-label="Escolher data">
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Projeto
+          <select name="project_id"><option value="">Sem projeto</option></select>
+        </label>
+        <label>Prioridade
+          <select name="priority">
+            <option value="1">Baixa</option>
+            <option value="2" selected>Média</option>
+            <option value="3">Alta</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="error" id="task-error" hidden></p>
+      <button class="primary" type="submit">Adicionar tarefa</button>
+      <p class="ok" id="task-ok" hidden>Tarefa adicionada ✓</p>
+    </form>
+
+    <h2>Hoje <span id="count"></span></h2>
+    <ul id="tasks"></ul>
+    <p class="empty" id="empty" hidden>Nada para hoje. 🎉</p>
+
+    <footer>
+      <a id="open-app" href="#" target="_blank">Abrir o Planejamento</a>
+      <span><span id="who"></span> · <button type="button" class="link" id="logout">Sair</button></span>
+    </footer>
+  </section>
+
+  <script src="api.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
