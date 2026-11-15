@@ -5,6 +5,7 @@ import { createTask, deleteTask, updateTask, type TaskInput } from "@/lib/action
 import { PRIORITY_LABEL, STATUS_LABEL, type Priority, type Status, type Task } from "@/lib/types";
 import { useApp } from "./AppContext";
 import { Checklist } from "./Checklist";
+import { Trash2 } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -56,18 +57,13 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-0 h-dvh max-h-none w-full max-w-none overflow-x-hidden overflow-y-auto overscroll-contain bg-white p-0 text-slate-900 backdrop:bg-black/40 md:m-auto md:h-auto md:max-h-[90dvh] md:w-[calc(100%-2rem)] md:max-w-lg md:rounded-xl md:shadow-xl dark:bg-slate-900 dark:text-slate-100"
+      className="m-0 h-dvh max-h-none w-full max-w-none overflow-x-hidden overflow-y-auto overscroll-contain bg-white p-0 text-slate-900 backdrop:bg-black/40 md:m-auto md:h-fit md:max-h-[90dvh] md:w-[calc(100%-2rem)] md:max-w-lg md:rounded-xl md:shadow-xl dark:bg-slate-900 dark:text-slate-100"
     >
       {open && (
-        <form action={submit}>
-          {/* Cabeçalho fixo: no celular, Cancelar e Salvar ficam sempre à mão */}
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-2 pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:static md:border-0 md:px-5 md:pt-5 md:pb-0 dark:border-slate-800 dark:bg-slate-900">
-            <button type="button" className="btn-ghost md:hidden" onClick={onClose}>Cancelar</button>
-            <h2 className="text-base font-semibold md:text-lg">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
-            <button className="btn-primary md:hidden" disabled={pending}>{pending ? "Salvando…" : "Salvar"}</button>
-          </div>
+        <form action={submit} className="flex min-h-full flex-col">
+          <h2 className="px-4 pt-[calc(1rem+env(safe-area-inset-top))] text-lg font-semibold md:px-5 md:pt-5">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
 
-          <div className="space-y-4 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:space-y-3 md:p-5 md:pb-5">
+          <div className="flex-1 space-y-4 p-4 md:space-y-3 md:p-5">
             <input className="input" name="title" placeholder="Título" defaultValue={v.title ?? ""} required autoFocus={!task} />
             <textarea
               className="input min-h-20 field-sizing-content max-h-[40vh]"
@@ -107,19 +103,25 @@ export function TaskDialog({ open, onClose, task, defaults }: Props) {
               </label>
             </div>
             {task && <Checklist taskId={task.id} />}
-            <div className="flex items-center justify-between pt-2">
-              {task ? (
-                <button type="button" className="btn text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10" onClick={remove} disabled={pending}>
-                  Excluir tarefa
-                </button>
-              ) : (
-                <span />
-              )}
-              <div className="hidden gap-2 md:flex">
-                <button type="button" className="btn-ghost" onClick={onClose}>Cancelar</button>
-                <button className="btn-primary" disabled={pending}>{pending ? "Salvando…" : "Salvar"}</button>
-              </div>
-            </div>
+          </div>
+
+          {/* Rodapé fixo: as ações ficam sempre visíveis ao rolar */}
+          <div className="sticky bottom-0 z-10 flex items-center gap-2 border-t border-slate-200 bg-slate-50 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-5 md:pb-3 dark:border-slate-800 dark:bg-slate-950">
+            {task && (
+              <button
+                type="button"
+                className="btn px-2.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                onClick={remove}
+                disabled={pending}
+                title="Excluir tarefa"
+                aria-label="Excluir tarefa"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+            <div className="flex-1" />
+            <button type="button" className="btn-outline" onClick={onClose}>Cancelar</button>
+            <button className="btn-primary px-5" disabled={pending}>{pending ? "Salvando…" : "Salvar"}</button>
           </div>
         </form>
       )}
